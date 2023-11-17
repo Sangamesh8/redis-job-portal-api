@@ -1,13 +1,14 @@
 package database
 
-import "github.com/redis/go-redis/v9"
+import (
+	"github.com/redis/go-redis/v9"
+)
 
-func RedisConnection() *redis.Client{
+func RedisConnection() *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
-		Addr: "localhost : 8080",
+		Addr:     "localhost:6379",
 		Password: "",
-		DB: 0,
-		Protocol: 3,
+		DB:       0,
 	})
 	return rdb
 }

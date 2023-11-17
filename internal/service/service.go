@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"job-portal-api/internal/auth"
+	"job-portal-api/internal/cache"
 	"job-portal-api/internal/models"
 	"job-portal-api/internal/repository"
 )
@@ -12,6 +13,7 @@ import (
 type Service struct {
 	UserRepo repository.UserRepo
 	auth     auth.Authentication
+	rdb cache.Caching
 }
 
 //go:generate mockgen -source=service.go -destination=service_mock.go -package=service
@@ -31,12 +33,13 @@ type JobPortalService interface {
 	ProcessJobApplication(ctx context.Context, jobData []models.JobApplicantResponse) ([]models.JobApplicantResponse, error)
 }
 
-func NewService(userRepo repository.UserRepo, a auth.Authentication) (JobPortalService, error) {
+func NewService(userRepo repository.UserRepo, a auth.Authentication, rdb cache.Caching) (JobPortalService, error) {
 	if userRepo == nil {
 		return nil, errors.New("interface cannot be null")
 	}
 	return &Service{
 		UserRepo: userRepo,
 		auth:     a,
+		rdb: rdb,
 	}, nil
 }

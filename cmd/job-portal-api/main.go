@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"job-portal-api/internal/auth"
+	"job-portal-api/internal/cache"
 	"job-portal-api/internal/database"
 	"job-portal-api/internal/handler"
 	"job-portal-api/internal/repository"
@@ -76,7 +77,8 @@ func StartApp() error {
 	if err != nil {
 		return fmt.Errorf("database is not connected: %w", err)
 	}
-
+	rdb := database.RedisConnection()
+	redisLayer := cache.NewRDBLayer(rdb)
 	// =========================================================================
 	// initialize the repository layer
 	repo, err := repository.NewRepository(db)
@@ -84,7 +86,7 @@ func StartApp() error {
 		return err
 	}
 
-	svc, err := service.NewService(repo, a)
+	svc, err := service.NewService(repo, a, redisLayer)
 	if err != nil {
 		return err
 	}

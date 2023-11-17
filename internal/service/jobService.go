@@ -2,11 +2,13 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"job-portal-api/internal/models"
 	"strconv"
 	"sync"
 
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -105,20 +107,41 @@ func (s *Service) ProcessJobApplication(ctx context.Context, jobData []models.Jo
 	var ProccessedJobData []models.JobApplicantResponse
 
 	ch := make(chan models.JobApplicantResponse) // make a channel
-		wg := new(sync.WaitGroup)                    // Initialize waitgroup variable
+	wg := new(sync.WaitGroup)                    // Initialize waitgroup variable
 
 	for _, v := range jobData {
 		wg.Add(1)                                // increment the waitgroup variable
 		go func(v models.JobApplicantResponse) { // goroutine
 			defer wg.Done() // decrement the waitgroup variable
-			jobDetails, err := s.UserRepo.JobByID(ctx, uint(v.JobID))
-			if err != nil {
-				return
+			var jobDa models.Jobs
+			val, err := s.rdb.Get(ctx, v.JobID)
+			fmt.Println("Redis 1", err)
+			if err == redis.Nil {
+
+				dbData, err := s.UserRepo.JobByID(ctx, v.JobID)
+				if err != nil {
+					return
+				}
+				err = s.rdb.Set(ctx, v.JobID, dbData)
+				if err != nil {
+					return
+				}
+				jobDa = dbData
+			} else {
+				err = json.Unmarshal([]byte(val), &jobDa)
+				if err == redis.Nil {
+					return
+				}
+				if err != nil {
+					return
+				}
 			}
-			if check, _ := applicationFilter(v, jobDetails); check {
-				ch <- v // send data to channel
+			check, _ := applicationFilter(v, jobDa)
+			if check {
+				ch <- v
 			}
 		}(v)
+
 	}
 	go func() {
 		wg.Wait()

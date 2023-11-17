@@ -212,7 +212,6 @@ func (h *Handler) ProcessJobApplication(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Application procseeing failed"})
 		return
 	}
-
 	c.JSON(http.StatusOK, jobData)
 
 }
