@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+  job-portal:
+    container_name: job-portal
+    ports:
+      - "8080:8080"
+    build: .
+    env_file:
+      - .env
+      - .app.postgres.env
+      - .rediscopy.env
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: job-portal
+    # restart: always
+    depends_on:
+      - postgres
+      - redis
+    # command: >
+    #    bash -c "until pg_isready -h postgres -p 5432; do
+    #              echo 'Waiting for PostgreSQL to start...';
+    #              sleep 2;
+    #            done;
+    #            ./your-application-binary"
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - "5432:5432"
+    env_file:
+      - .postgres.env
+    # environment:
+    #   - POSTGRES_USER=postgres
+    #   - POSTGRES_PASSWORD=admin
+    #   - POSTGRES_DB=jobapplication
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+    env_file:
+      - .redis.env

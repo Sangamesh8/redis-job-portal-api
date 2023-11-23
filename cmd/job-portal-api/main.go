@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"time"
 
+	"job-portal-api/config"
 	"job-portal-api/internal/auth"
 	"job-portal-api/internal/cache"
 	"job-portal-api/internal/database"
@@ -29,6 +30,8 @@ func main() {
 }
 
 func StartApp() error {
+	cfg := config.GetConfig()
+	fmt.Println(cfg, "{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}")
 	// =========================================================================
 	// initializing the authentication support
 	log.Info().Msg("main started : initializing the authentication support")
@@ -60,7 +63,7 @@ func StartApp() error {
 
 	log.Info().Msg("main started : initializing the data")
 
-	db, err := database.ConnectToDatabase()
+	db, err := database.ConnectToDatabase(cfg)
 	if err != nil {
 		return fmt.Errorf("error in opening the database connection : %w", err)
 	}
@@ -77,7 +80,10 @@ func StartApp() error {
 	if err != nil {
 		return fmt.Errorf("database is not connected: %w", err)
 	}
-	rdb := database.RedisConnection()
+	rdb, err := database.RedisConnection(cfg)
+	if err != nil {
+		log.Panic().Err(err).Msg("connection not established with redis")
+	}
 	redisLayer := cache.NewRDBLayer(rdb)
 	// =========================================================================
 	// initialize the repository layer
@@ -93,7 +99,7 @@ func StartApp() error {
 
 	// initializing the http server
 	api := http.Server{
-		Addr:         ":8080",
+		Addr:         fmt.Sprintf(":%s", cfg.AppConfig.Port),
 		ReadTimeout:  8000 * time.Second,
 		WriteTimeout: 800 * time.Second,
 		IdleTimeout:  800 * time.Second,

@@ -1,14 +1,21 @@
 package database
 
 import (
+	"context"
+	"job-portal-api/config"
+
 	"github.com/redis/go-redis/v9"
 )
 
-func RedisConnection() *redis.Client {
+func RedisConnection(cfg config.Config) (*redis.Client,error ){
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
+		Addr: cfg.RedisConfig.RedisAddr,
+		Password: cfg.RedisConfig.RedisPassword,
+		DB:       cfg.RedisConfig.RedisDb,
 	})
-	return rdb
+	_,err :=rdb.Ping(context.Background()).Result()
+	if err != nil{
+		return nil, err
+	}
+	return rdb,nil
 }
