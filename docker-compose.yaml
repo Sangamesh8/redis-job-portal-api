@@ -10,11 +10,12 @@ services:
       - .env
       - .app.postgres.env
       - .rediscopy.env
+      - .privatekey.env
     # build:
     #   context: .
     #   dockerfile: Dockerfile
     image: job-portal
-    # restart: always
+    restart: always
     depends_on:
       - postgres
       - redis

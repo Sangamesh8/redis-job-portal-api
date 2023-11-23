@@ -32,15 +32,15 @@ func main() {
 func StartApp() error {
 	cfg := config.GetConfig()
 	fmt.Println(cfg, "{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}")
-	// =========================================================================
+
 	// initializing the authentication support
 	log.Info().Msg("main started : initializing the authentication support")
 
 	//reading the private key file
-	privatePEM, err := os.ReadFile("private.pem")
-	if err != nil {
-		return fmt.Errorf("error in reading auth private key : %w", err)
-	}
+	// privatePEM := fmt.Sprintf("%s", cfg.PrivateKey.PrivateKey)
+
+	privatePEM := []byte(cfg.PrivateKey.PrivateKey)
+
 	privateKey, err := jwt.ParseRSAPrivateKeyFromPEM(privatePEM)
 	if err != nil {
 		return fmt.Errorf("error in parsing auth private key : %w", err)
@@ -58,7 +58,6 @@ func StartApp() error {
 		return fmt.Errorf("error in constructing auth %w", err)
 	}
 
-	// =========================================================================
 	// start the database
 
 	log.Info().Msg("main started : initializing the data")

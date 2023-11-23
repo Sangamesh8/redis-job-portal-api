@@ -13,6 +13,7 @@ type Config struct {
 	PostgresConfig PostgresConfig
 	// DbPostgresConfig DbPostgresConfig
 	RedisConfig RedisConfig
+	PrivateKey  PrivateKey
 }
 
 type AppConfig struct {
@@ -23,7 +24,7 @@ type PostgresConfig struct {
 	PostgresHost     string `env:"POSTGRES_HOST,required=true"`
 	PostgresUser     string `env:"POSTGRES_USER,required=true"`
 	PostgresPassword string `env:"POSTGRES_PASSWORD,required=true"`
-	PostgresName     string `env:"POSTGRES_NAME,required=true"`
+	PostgresDB       string `env:"POSTGRES_DB,required=true"`
 	PostgresPort     string `env:"POSTGRES_PORT,required=true"`
 	PostgresSSLMode  string `env:"POSTGRES_SSLMODE,required=true"`
 	PostgresTimezone string `env:"POSTGRES_TIMEZONE,required=true"`
@@ -41,7 +42,10 @@ type PostgresConfig struct {
 type RedisConfig struct {
 	RedisAddr     string `env:"REDIS_ADDR,required=true"`
 	RedisPassword string `env:"REDIS_PASSWORD,required=true"`
-	RedisDb       int `env:"REDIS_DB,required=true"`
+	RedisDb       int    `env:"REDIS_DB,required=true"`
+}
+type PrivateKey struct {
+	PrivateKey string `env:"PRIVATE_KEY_BASE64,required=true"`
 }
 
 func init() {

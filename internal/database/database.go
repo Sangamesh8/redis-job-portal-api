@@ -5,13 +5,14 @@ import (
 	"job-portal-api/internal/models"
 
 	"job-portal-api/config"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func ConnectToDatabase(cfg config.Config) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
-	cfg.PostgresConfig.PostgresHost, cfg.PostgresConfig.PostgresUser, cfg.PostgresConfig.PostgresPassword, cfg.PostgresConfig.PostgresName,cfg.PostgresConfig.PostgresPort,cfg.PostgresConfig.PostgresSSLMode,cfg.PostgresConfig.PostgresTimezone)
+		cfg.PostgresConfig.PostgresHost, cfg.PostgresConfig.PostgresUser, cfg.PostgresConfig.PostgresPassword, cfg.PostgresConfig.PostgresDB, cfg.PostgresConfig.PostgresPort, cfg.PostgresConfig.PostgresSSLMode, cfg.PostgresConfig.PostgresTimezone)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
