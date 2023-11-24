@@ -21,6 +21,7 @@ type JobPortalService interface {
 	UserSignup(ctx context.Context, userData models.NewUser) (models.User, error)
 	UserSignIn(ctx context.Context, userData models.NewUser) (string, error)
 	ForgotPassword(ctx context.Context,forgotPasswordDetails models.ForgotPasswordRequest)(error)
+	PasswordRecovery(ctx context.Context,passwordRecoveryRequest models.PasswordRecoveryRequest)(error)
 
 	AddCompanyDetails(ctx context.Context, companyData models.Company) (models.Company, error)
 	ViewAllCompanies(ctx context.Context) ([]models.Company, error)

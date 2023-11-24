@@ -35,3 +35,25 @@ func (r *Repo) CheckEmail(ctx context.Context, email string) (models.User, error
 	// If no error occurred, return the retrieved user details
 	return userDetails, nil
 }
+
+func (r *Repo) UpdatePassword(ctx context.Context, data models.PasswordRecoveryRequest, hashedPass string) error {
+	var userDetails models.User
+	// Query the database to find a user with the specified email and update the hashed password in db
+	result := r.DB.Where("email = ?", data.Email).First(&userDetails)
+	if result.Error != nil {
+		// Log the error and return an error indicating that the email is not found
+		log.Info().Err(result.Error).Send()
+		return errors.New("email not found")
+	}
+	// Update the hashed password in the user details
+	userDetails.PasswordHash = hashedPass
+	// Save the updated user details in the database
+	result = r.DB.Save(&userDetails)
+	if result.Error != nil {
+		// Log the error and return an error indicating that the password update failed
+		log.Info().Err(result.Error).Send()
+		return errors.New("failed to update password")
+	}
+	// If no error occurred, return nil
+	return nil
+}

@@ -19,7 +19,7 @@ type Repo struct {
 type UserRepo interface {
 	CreateUser(ctx context.Context, userData models.User) (models.User, error)
 	CheckEmail(ctx context.Context, email string) (models.User, error)
-
+	UpdatePassword(ctx context.Context, data models.PasswordRecoveryRequest, hashedPass string) error
 
 	CreateCompany(ctx context.Context, companyData models.Company) (models.Company, error)
 	ViewCompanies(ctx context.Context) ([]models.Company, error)

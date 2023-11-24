@@ -19,6 +19,7 @@ type Caching interface {
 	Set(ctx context.Context, jobID uint, jobData models.Jobs) error
 	Get(ctx context.Context, jobID uint) (string, error)
 	VerficationCodeSet(ctx context.Context,  email string,verficationCode int) error
+	VerficationCodeGet(ctx context.Context, email string)(string, error)
 }
 
 func NewRDBLayer(rdb *redis.Client) Caching {
@@ -49,3 +50,7 @@ func (c* RDBLayer) VerficationCodeSet(ctx context.Context, email string,verficat
 	return err
 }
 
+func(c* RDBLayer) VerficationCodeGet(ctx context.Context, email string)(string, error){
+	str, err := c.rdb.Get(ctx, email).Result()
+	return str, err
+}

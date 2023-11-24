@@ -135,3 +135,39 @@ func (h *Handler) ForgotPassword(c *gin.Context) {
 		"message": "Password reset link has been sent to your email",
 	})
 }
+
+func (h* Handler) PasswordRecovery(c *gin.Context){
+	// Extract trace ID from the request context
+	ctx := c.Request.Context()
+	traceid, ok := ctx.Value(middleware.TraceIDKey).(string)
+	if !ok {
+		// Log an error and respond with a 500 Internal Server Error if trace ID is missing
+		log.Error().Msg("traceid missing from context")
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": http.StatusText(http.StatusInternalServerError),
+		})
+		return
+	}
+	var passwordRecoveryRequest models.PasswordRecoveryRequest
+	err := json.NewDecoder(c.Request.Body).Decode(&passwordRecoveryRequest)
+	if err != nil {
+		log.Error().Err(err).Str("trace id", traceid)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "please provide valid reset token and new password",
+		})
+		return
+	}
+	// Perform password recovery operation using the service
+	err = h.service.PasswordRecovery(ctx, passwordRecoveryRequest)
+	if err != nil {
+		log.Error().Err(err).Str("trace id", traceid)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	// Respond with a success message
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Password reset successful",
+	})
+}

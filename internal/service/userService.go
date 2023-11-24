@@ -87,3 +87,24 @@ func (s *Service) ForgotPassword(ctx context.Context, forgotPasswordDetails mode
 
 	return nil
 }
+
+func(s *Service) PasswordRecovery(ctx context.Context,passwordRecoveryRequest models.PasswordRecoveryRequest)(error){
+	// Check if the verfication code is valid
+	verficationCode, err := s.rdb.VerficationCodeGet(ctx, passwordRecoveryRequest.Email)
+	if err != nil{
+		return err
+	}
+	if verficationCode!= passwordRecoveryRequest.VerficationCode{	
+		return errors.New("verfication code is not valid")
+	}
+	// Update the password
+	hashedPass, err := pkg.HashPassword(passwordRecoveryRequest.NewPassword)
+	if err != nil {
+		return err
+	}
+	err = s.UserRepo.UpdatePassword(ctx, passwordRecoveryRequest, hashedPass)
+	if err != nil{
+		return err
+	}
+	return nil
+}

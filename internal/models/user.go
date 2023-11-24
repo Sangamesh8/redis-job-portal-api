@@ -19,3 +19,10 @@ type ForgotPasswordRequest struct {
 	Username string `json:"username" validate:"required"`
 	Email    string `json:"email" validate:"required"`
 }
+
+type PasswordRecoveryRequest struct {
+	VerficationCode    string `json:"verficationCode" validate:"required"`
+	Email              string `json:"email" validate:"required"`
+	NewPassword        string `json:"newPassword" validate:"required"`
+	NewPasswordConfirm string `json:"newPasswordConfirm" validate:"required"`
+}
