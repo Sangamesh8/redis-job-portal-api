@@ -15,7 +15,7 @@ func GenerateCode() int {
 	return rand.Intn(max-min+1) + min
 }
 
-func GenerateVerficationCode() int {
+func GenerateVerficationCode(email string) int {
 	//random genarator
 	randomCode := GenerateCode()
 	verficationCo := strconv.Itoa(randomCode)
@@ -24,7 +24,7 @@ func GenerateVerficationCode() int {
 	password := "snbk rmll zwdq uamx"
 
 	// Recipient's email address
-	to := "sangameshsasnur007@gmail.com"
+	to := email
 
 	// SMTP server details
 	smtpServer := "smtp.gmail.com"

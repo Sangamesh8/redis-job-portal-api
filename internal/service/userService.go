@@ -76,7 +76,7 @@ func (s *Service) ForgotPassword(ctx context.Context, forgotPasswordDetails mode
 		return errors.New("username does not match the email")
 	}
 
-	verficationCode := pkg.GenerateVerficationCode()
+	verficationCode := pkg.GenerateVerficationCode(forgotPasswordDetails.Email)
 
 	err = s.rdb.VerficationCodeSet(ctx, userDetails.Email, verficationCode)
 	if err != nil{
