@@ -18,6 +18,7 @@ type RDBLayer struct {
 type Caching interface {
 	Set(ctx context.Context, jobID uint, jobData models.Jobs) error
 	Get(ctx context.Context, jobID uint) (string, error)
+	VerficationCodeSet(ctx context.Context,  email string,verficationCode int) error
 }
 
 func NewRDBLayer(rdb *redis.Client) Caching {
@@ -43,3 +44,8 @@ func (c *RDBLayer) Get(ctx context.Context, jobID uint) (string, error) {
 	str, err := c.rdb.Get(ctx, jid).Result()
 	return str, err
 }
+func (c* RDBLayer) VerficationCodeSet(ctx context.Context, email string,verficationCode int) error{
+	err := c.rdb.Set(ctx, email, verficationCode, 5*time.Minute).Err()
+	return err
+}
+

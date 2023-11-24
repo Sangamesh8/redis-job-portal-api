@@ -33,7 +33,7 @@ func Api(a auth.Authentication, ser service.JobPortalService) *gin.Engine {
 
 	r.POST("/signup", h.SignUpUser)
 	r.POST("/login", h.LoginUser)
-	// r.POST("/forgotPassword", h.ForgotPassword)
+	r.POST("/forgotPassword", h.ForgotPassword)
 	r.POST("/createCompany", m.Authenticate(h.CreateCompany))
 	r.GET("/viewAllCompanies/all", m.Authenticate(h.ViewAllCompanies))
 	r.GET("/viewCompanyByID/:id", m.Authenticate(h.ViewCompanyByID))

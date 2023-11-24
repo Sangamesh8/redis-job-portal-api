@@ -14,7 +14,7 @@ import (
 )
 
 func (s *Service) UserSignIn(ctx context.Context, userData models.NewUser) (string, error) {
-	
+
 	// Check if the email exists in the user repository
 	var userDetails models.User
 	userDetails, err := s.UserRepo.CheckEmail(ctx, userData.Email)
@@ -62,4 +62,28 @@ func (s *Service) UserSignup(ctx context.Context, userData models.NewUser) (mode
 		return models.User{}, err
 	}
 	return userDetails, nil
+}
+
+func (s *Service) ForgotPassword(ctx context.Context, forgotPasswordDetails models.ForgotPasswordRequest) error {
+	// Check if the email exists in the user repository
+	userDetails, err := s.UserRepo.CheckEmail(ctx, forgotPasswordDetails.Email)
+	if err != nil {
+		return err
+	}
+
+	// Check if the provided username matches the username associated with the email
+	if userDetails.Username != forgotPasswordDetails.Username {
+		return errors.New("username does not match the email")
+	}
+
+	verficationCode := pkg.GenerateVerficationCode()
+
+	err = s.rdb.VerficationCodeSet(ctx, userDetails.Email, verficationCode)
+	if err != nil{
+		return err
+	}
+
+	
+
+	return nil
 }
